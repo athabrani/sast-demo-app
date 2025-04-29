@@ -17,7 +17,7 @@ pipeline {
                 sh '''
                     python3 -m venv $VENV_DIR
                     . $VENV_DIR/bin/activate
-                    python -m pip install --upgrade pip
+                    pip install --upgrade pip
                     pip install bandit
                 '''
             }
@@ -26,19 +26,18 @@ pipeline {
         stage('SAST Analysis') {
             steps {
                 sh '''
-                    set -e  # Stop if any command fails
                     . $VENV_DIR/bin/activate
-
-                    echo "Running Bandit scan..."
-                    bandit -f xml -o bandit-output.xml -r . || echo "Bandit exited with non-zero code"
-
-                    echo "Bandit output content:"
-                    cat bandit-output.xml || echo "No bandit output file found"
+                    bandit -r . -f xml -o bandit-output.xml || echo "Bandit finished with issues"
+                    bandit -r . -f txt || echo "Bandit text output"
                 '''
-                recordIssues tools: [scanForIssues(tool: 'Bandit', pattern: 'bandit-output.xml')]
+            }
+        }
+
+        stage('Archive Report') {
+            steps {
+                archiveArtifacts artifacts: 'bandit-output.xml', fingerprint: true
             }
         }
     }
 }
-
 
