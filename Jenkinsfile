@@ -35,7 +35,7 @@ pipeline {
                     echo "Bandit output content:"
                     cat bandit-output.xml || echo "No bandit output file found"
                 '''
-                recordIssues tools: [bandit(pattern: 'bandit-output.xml')]
+                recordIssues tools: [scanForIssues(tool: 'Bandit', pattern: 'bandit-output.xml')]
             }
         }
     }
