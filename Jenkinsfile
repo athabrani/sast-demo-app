@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'pip install bandit'
+                sh 'pipx install bandit'
             }
         }
         stage('SAST Analysis') {
